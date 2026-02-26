@@ -1,50 +1,143 @@
-# Welcome to your Expo app 👋
+# Mobile Movie App 📱🎬
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A modern, cross-platform mobile application for discovering, browsing, and managing your favorite movies. Built with React Native and Expo, this app provides an intuitive interface to explore movie databases, view details, and keep track of your watchlist.
 
-## Get started
+## 🚀 Features
 
-1. Install dependencies
+- **Movie Discovery**: Browse trending, popular, and top-rated movies
+- **Detailed Movie Information**: View comprehensive movie details including cast, crew, ratings, and trailers
+- **Search Functionality**: Find movies by title, genre, or actor
+- **Watchlist Management**: Save movies to your personal watchlist for later viewing
+- **Offline Support**: Cache movie data for offline browsing
+- **Cross-Platform**: Works seamlessly on iOS and Android devices
+- **Dark/Light Theme**: Automatic theme switching based on device preferences
+- **Responsive Design**: Optimized for various screen sizes and orientations
 
+## 📸 Screenshots
+
+*Add screenshots of your app here*
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Expo](https://expo.dev) - React Native framework
+- **Language**: TypeScript
+- **Navigation**: [Expo Router](https://docs.expo.dev/router/introduction/) - File-based routing
+- **UI Components**: Custom themed components with React Native
+- **State Management**: React hooks and context
+- **API**: The Movie Database (TMDb) API
+- **Styling**: Tailwind CSS-inspired theming system
+
+## 📋 Prerequisites
+
+- Node.js (version 18 or higher)
+- npm or yarn package manager
+- Expo CLI
+- iOS Simulator (for iOS development) or Android Studio (for Android development)
+
+## 🔧 Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/mobile_movie_app.git
+   cd mobile_movie_app
+   ```
+
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-2. Start the app
+3. **Set up environment variables**
+   - Create a `.env` file in the root directory
+   - Add your TMDb API key:
+     ```
+     TMDB_API_KEY=your_api_key_here
+     ```
 
+4. **Start the development server**
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+5. **Run on device/simulator**
+   - For Expo Go: Scan the QR code with the Expo Go app
+   - For development build: Follow Expo's development build guide
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 📖 Usage
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### Navigation
+- **Home**: Browse trending movies
+- **Explore**: Search and discover new movies
+- **Watchlist**: View your saved movies
 
-## Get a fresh project
+### Adding to Watchlist
+1. Open a movie details page
+2. Tap the bookmark icon to add/remove from watchlist
 
-When you're ready, run:
+### Searching Movies
+1. Navigate to the Explore tab
+2. Use the search bar to find movies by title or keywords
 
-```bash
-npm run reset-project
+## 🏗️ Project Structure
+
+```
+mobile_movie_app/
+├── app/                    # Main application code (file-based routing)
+│   ├── _layout.tsx        # Root layout
+│   ├── modal.tsx          # Modal screens
+│   └── (tabs)/            # Tab-based navigation
+│       ├── _layout.tsx
+│       ├── index.tsx      # Home screen
+│       └── explore.tsx    # Explore screen
+├── assets/                # Static assets (images, fonts)
+├── components/            # Reusable UI components
+│   ├── ui/               # UI-specific components
+│   └── ...               # Other components
+├── constants/             # App constants and themes
+├── hooks/                 # Custom React hooks
+└── scripts/               # Utility scripts
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 🔄 Development
 
-## Learn more
+### Available Scripts
 
-To learn more about developing your project with Expo, look at the following resources:
+- `npm start` - Start the Expo development server
+- `npm run android` - Run on Android emulator/device
+- `npm run ios` - Run on iOS simulator/device
+- `npm run web` - Run in web browser
+- `npm run reset-project` - Reset to a fresh project state
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Code Style
 
-## Join the community
+This project uses ESLint for code linting. Run `npm run lint` to check for issues.
 
-Join our community of developers creating universal apps.
+### Testing
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+*Add testing instructions here*
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [The Movie Database (TMDb)](https://www.themoviedb.org/) for providing movie data
+- [Expo](https://expo.dev) for the amazing React Native framework
+- [React Native Community](https://github.com/react-native-community) for various libraries
+
+## 📞 Support
+
+If you have any questions or issues, please open an issue on GitHub or contact the development team.
+
+---
+
+*Built with ❤️ using Expo and React Native*
