@@ -9,6 +9,27 @@ export const fetchTrendingMovies = async () => {
     return data.results || [];
 };
 
+export const fetchTrendingTV = async () => {
+    const url = `${BASE_URL}/trending/tv/day?api_key=${API_KEY}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    return data.results || [];
+};
+
+export const fetchTrendingAll = async () => {
+    const url = `${BASE_URL}/trending/all/day?api_key=${API_KEY}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    return data.results || [];
+};
+
+export const fetchMoviesByMood = async (genreIds: number[]) => {
+    const url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=${genreIds.join(',')}&sort_by=popularity.desc`;
+    const response = await fetch(url);
+    const data = await response.json();
+    return data.results || [];
+};
+
 export const searchMovies = async (query: string) => {
     const url = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
     const response = await fetch(url);

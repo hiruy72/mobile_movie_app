@@ -1,3 +1,4 @@
+import { useUser } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -10,12 +11,14 @@ import {
   Dimensions,
   Image,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View
 } from 'react-native';
-import { fetchTrendingMovies, getImageUrl } from '../../utils/api';
+import { fetchMoviesByMood, fetchTrendingAll, fetchTrendingMovies, fetchTrendingTV, getImageUrl } from '../../utils/api';
+import { syncUserToDB } from '../../utils/userService';
 
 const { width, height } = Dimensions.get('window');
 const SPACING = 15;
@@ -29,13 +32,47 @@ export default function HomeScreen() {
   const [trending, setTrending] = useState<any[]>([]);
   const [recommended, setRecommended] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState('All');
+  const [selectedMood, setSelectedMood] = useState<string | null>(null);
+
+  const filters = ['All', 'Movies', 'TV Series'];
+
+  const moods = [
+    { label: 'Happy', emoji: '😊', genres: [35, 10751] }, // Comedy, Family
+    { label: 'Sad', emoji: '😢', genres: [18] }, // Drama
+    { label: 'Broken', emoji: '💔', genres: [10749, 18] }, // Romance, Drama
+    { label: 'Excited', emoji: '🔥', genres: [28, 12] }, // Action, Adventure
+    { label: 'Bored', emoji: '🥱', genres: [53, 9648] }, // Thriller, Mystery
+    { label: 'Spooky', emoji: '👻', genres: [27] }, // Horror
+  ];
+
+  const { user } = useUser();
 
   useEffect(() => {
     const loadData = async () => {
+      setLoading(true);
       try {
-        const data = await fetchTrendingMovies();
+        let data = [];
+
+        if (selectedMood) {
+          const moodObj = moods.find(m => m.label === selectedMood);
+          data = await fetchMoviesByMood(moodObj?.genres || []);
+        } else {
+          if (activeFilter === 'All') {
+            data = await fetchTrendingAll();
+          } else if (activeFilter === 'Movies') {
+            data = await fetchTrendingMovies();
+          } else {
+            data = await fetchTrendingTV();
+          }
+        }
+
         setTrending(data.slice(0, 5)); // Top 5 for hero carousel
         setRecommended(data.slice(5)); // Rest for the grid
+
+        if (user) {
+          syncUserToDB(user);
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -43,7 +80,20 @@ export default function HomeScreen() {
       }
     };
     loadData();
-  }, []);
+  }, [user, activeFilter, selectedMood]);
+
+  const handleFilterChange = (filter: string) => {
+    setSelectedMood(null); // Reset mood when switching main filters
+    setActiveFilter(filter);
+  };
+
+  const handleMoodChange = (mood: string) => {
+    if (selectedMood === mood) {
+      setSelectedMood(null); // Deselect if clicking the same mood
+    } else {
+      setSelectedMood(mood);
+    }
+  };
 
   const renderHeader = () => (
     <Animated.View style={[
@@ -61,9 +111,12 @@ export default function HomeScreen() {
           <Text style={styles.greetingText}>Welcome back 👋</Text>
           <Text style={styles.headerTitle}>Discover</Text>
         </View>
-        <TouchableOpacity style={styles.profileButton}>
+        <TouchableOpacity
+          style={styles.profileButton}
+          onPress={() => router.push('/profile/edit')}
+        >
           <Image
-            source={{ uri: 'https://i.pravatar.cc/150?img=11' }}
+            source={{ uri: user?.imageUrl || 'https://i.pravatar.cc/150?img=11' }}
             style={styles.profileImage}
           />
         </TouchableOpacity>
@@ -154,6 +207,74 @@ export default function HomeScreen() {
         )}
         scrollEventThrottle={16}
       >
+        {/* Filter Section */}
+        <View style={styles.filterContainer}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
+            {filters.map((filter) => {
+              const isActive = !selectedMood && activeFilter === filter;
+              return (
+                <TouchableOpacity
+                  key={filter}
+                  onPress={() => handleFilterChange(filter)}
+                  style={styles.filterTouchable}
+                  activeOpacity={0.7}
+                >
+                  <View style={[
+                    styles.filterButton,
+                    isActive && styles.activeFilterButton
+                  ]}>
+                    {isActive && <BlurView intensity={20} tint="light" style={StyleSheet.absoluteFill} />}
+                    <Text style={[
+                      styles.filterText,
+                      isActive && styles.activeFilterText
+                    ]}>
+                      {filter}
+                    </Text>
+                  </View>
+                  {isActive && <View style={styles.filterIndicator} />}
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+
+        {/* Mood Suggest Section */}
+        <View style={styles.moodSection}>
+          <View style={styles.moodHeader}>
+            <Text style={styles.moodTitle}>How are you feeling?</Text>
+            <View style={styles.moodDot} />
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.moodScroll}>
+            {moods.map((mood) => {
+              const isSelected = selectedMood === mood.label;
+              return (
+                <TouchableOpacity
+                  key={mood.label}
+                  onPress={() => handleMoodChange(mood.label)}
+                  style={styles.moodTouchable}
+                  activeOpacity={0.8}
+                >
+                  <LinearGradient
+                    colors={isSelected ? ['#E50914', '#9B060D'] : ['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.02)']}
+                    style={styles.moodCard}
+                  >
+                    <View style={styles.moodIconContainer}>
+                      <Text style={styles.moodEmoji}>{mood.emoji}</Text>
+                      {isSelected && <View style={styles.moodGlow} />}
+                    </View>
+                    <Text style={[
+                      styles.moodLabel,
+                      isSelected && styles.activeMoodLabel
+                    ]}>
+                      {mood.label}
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+
         {/* Carousel Section */}
         <Animated.FlatList
           data={trending}
@@ -168,8 +289,19 @@ export default function HomeScreen() {
 
         {/* Grid Section */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Recommended For You</Text>
-          <TouchableOpacity>
+          <Text style={styles.sectionTitle}>
+            {selectedMood ? `${selectedMood} Specials` : `Trending ${activeFilter}`}
+          </Text>
+          <TouchableOpacity
+            onPress={() => router.push({
+              pathname: '/see-all',
+              params: {
+                title: selectedMood ? `${selectedMood} Specials` : `Trending ${activeFilter}`,
+                type: activeFilter,
+                mood: selectedMood || ''
+              }
+            })}
+          >
             <Text style={styles.seeAllText}>See All</Text>
           </TouchableOpacity>
         </View>
@@ -237,6 +369,120 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingTop: 110, // Give space for the absolute header
     paddingBottom: 120, // Extra padding for the floating tab bar
+  },
+  filterContainer: {
+    marginBottom: 20,
+  },
+  filterScroll: {
+    paddingHorizontal: SPACING,
+  },
+  filterButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  activeFilterButton: {
+    backgroundColor: '#E50914',
+    borderColor: '#E50914',
+  },
+  filterText: {
+    color: '#8A8A93',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  activeFilterText: {
+    color: '#FFF',
+    fontWeight: '800',
+  },
+  filterTouchable: {
+    marginRight: 12,
+    alignItems: 'center',
+  },
+  filterIndicator: {
+    width: 20,
+    height: 3,
+    backgroundColor: '#E50914',
+    borderRadius: 2,
+    marginTop: 6,
+    shadowColor: '#E50914',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
+  },
+  moodSection: {
+    marginBottom: 35,
+  },
+  moodHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: SPACING,
+    marginBottom: 15,
+  },
+  moodTitle: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  moodDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#E50914',
+    marginLeft: 8,
+  },
+  moodScroll: {
+    paddingHorizontal: SPACING,
+    paddingBottom: 10,
+  },
+  moodTouchable: {
+    marginRight: 15,
+  },
+  moodCard: {
+    width: 100,
+    height: 120,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+    padding: 10,
+  },
+  moodIconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  moodGlow: {
+    position: 'absolute',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    shadowColor: '#FFF',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 15,
+  },
+  moodEmoji: {
+    fontSize: 26,
+    zIndex: 2,
+  },
+  moodLabel: {
+    color: '#8A8A93',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  activeMoodLabel: {
+    color: '#FFF',
   },
   carouselContainer: {
     paddingVertical: 10,

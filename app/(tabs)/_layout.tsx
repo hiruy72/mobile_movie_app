@@ -1,10 +1,21 @@
+import { useAuth } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import { Tabs } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 import React from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 
 export default function TabLayout() {
+  const { isLoaded, isSignedIn } = useAuth();
+
+  if (!isLoaded) {
+    return <View><Text>Loading...</Text></View>;
+  }
+
+  if (!isSignedIn) {
+    return <Redirect href="/" />;
+  }
+
   return (
     <Tabs
       screenOptions={{

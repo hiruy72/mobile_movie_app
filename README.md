@@ -1,143 +1,104 @@
-# Mobile Movie App 📱🎬
+# Cinemate - Premium Movie Discovery Platform 🍿✨
 
-A modern, cross-platform mobile application for discovering, browsing, and managing your favorite movies. Built with React Native and Expo, this app provides an intuitive interface to explore movie databases, view details, and keep track of your watchlist.
+Cinemate is a state-of-the-art mobile application built with **React Native (Expo)**, designed to provide a cinematic movie-watching and discovery experience. It features a stunning "Masterpiece" UI influenced by modern streaming aesthetics, integrated with real-time data and cloud-based user management.
 
-## 🚀 Features
+## 🌟 Key Features
 
-- **Movie Discovery**: Browse trending, popular, and top-rated movies
-- **Detailed Movie Information**: View comprehensive movie details including cast, crew, ratings, and trailers
-- **Search Functionality**: Find movies by title, genre, or actor
-- **Watchlist Management**: Save movies to your personal watchlist for later viewing
-- **Offline Support**: Cache movie data for offline browsing
-- **Cross-Platform**: Works seamlessly on iOS and Android devices
-- **Dark/Light Theme**: Automatic theme switching based on device preferences
-- **Responsive Design**: Optimized for various screen sizes and orientations
+### 🎬 Cinematic UI/UX
+- **Masterpiece Design System**: Ultra-modern dark theme with glassmorphism, vibrant red accents, and subtle micro-animations.
+- **Dynamic Hero Carousel**: Beautifully rendered trending masterpieces with glass rating badges and gradient overlays.
+- **Frosted Glass Navigation**: Premium tab bar and header using `BlurView` for a high-end feel.
 
-## 📸 Screenshots
+### 🎭 Intelligent Discovery
+- **Mood Suggester**: Feeling "Happy", "Sad", or "Spooky"? Discover movies perfectly matched to your emotional state using our custom genre-mapping engine.
+- **Smart Filtering**: Seamlessly toggle between "All", "Movies", and "TV Series" with real-time content updates.
+- **Contextual "See All"**: Explore full grids of movies with titles that change based on your active filters or selected mood.
 
-*Add screenshots of your app here*
+### 🔐 Secure Identity & Data
+- **Clerk Authentication**: Robust user authentication featuring Google OAuth and secure session management.
+- **Neon Database Integration**: Scalable PostgreSQL backend via Neon for persistent user profiles and personalized data.
+- **Automatic Sync**: Real-time synchronization between Clerk auth metadata and your Neon database profile.
 
 ## 🛠️ Tech Stack
 
-- **Framework**: [Expo](https://expo.dev) - React Native framework
-- **Language**: TypeScript
-- **Navigation**: [Expo Router](https://docs.expo.dev/router/introduction/) - File-based routing
-- **UI Components**: Custom themed components with React Native
-- **State Management**: React hooks and context
-- **API**: The Movie Database (TMDb) API
-- **Styling**: Tailwind CSS-inspired theming system
+- **Frontend**: React Native, Expo, Expo Router (File-based routing)
+- **Styling**: Vanilla CSS-in-JS, Expo Linear Gradient, Expo Blur
+- **Authentication**: [@clerk/clerk-expo](https://clerk.com)
+- **Database**: [Neon PostgreSQL](https://neon.tech)
+- **ORM**: [Drizzle ORM](https://orm.drizzle.team)
+- **API**: TMDB (The Movie Database) API
+- **Build**: EAS (Expo Application Services)
 
-## 📋 Prerequisites
+## 🚀 Getting Started
 
-- Node.js (version 18 or higher)
-- npm or yarn package manager
-- Expo CLI
-- iOS Simulator (for iOS development) or Android Studio (for Android development)
+### Prerequisites
+- Node.js (v18 or newer)
+- npm or yarn
+- Expo Go app on your mobile device (for testing)
 
-## 🔧 Installation
+### Installation
 
-1. **Clone the repository**
+1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/mobile_movie_app.git
+   git clone https://github.com/your-username/mobile_movie_app.git
    cd mobile_movie_app
    ```
 
-2. **Install dependencies**
+2. **Install dependencies**:
    ```bash
    npm install
    ```
 
-3. **Set up environment variables**
-   - Create a `.env` file in the root directory
-   - Add your TMDb API key:
-     ```
-     TMDB_API_KEY=your_api_key_here
-     ```
-
-4. **Start the development server**
-   ```bash
-   npx expo start
+3. **Set up Environment Variables**:
+   Create a `.env` file in the root directory and add your keys:
+   ```env
+   EXPO_PUBLIC_TMDB_API_KEY=your_tmdb_key
+   EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
+   DATABASE_URL=your_neon_postgresql_url
+   EXPO_PUBLIC_DATABASE_URL=your_neon_postgresql_url
    ```
 
-5. **Run on device/simulator**
-   - For Expo Go: Scan the QR code with the Expo Go app
-   - For development build: Follow Expo's development build guide
+4. **Start the development server**:
+   ```bash
+   npx expo start -c
+   ```
 
-## 📖 Usage
+### 📱 Building for Production
 
-### Navigation
-- **Home**: Browse trending movies
-- **Explore**: Search and discover new movies
-- **Watchlist**: View your saved movies
-
-### Adding to Watchlist
-1. Open a movie details page
-2. Tap the bookmark icon to add/remove from watchlist
-
-### Searching Movies
-1. Navigate to the Explore tab
-2. Use the search bar to find movies by title or keywords
-
-## 🏗️ Project Structure
-
-```
-mobile_movie_app/
-├── app/                    # Main application code (file-based routing)
-│   ├── _layout.tsx        # Root layout
-│   ├── modal.tsx          # Modal screens
-│   └── (tabs)/            # Tab-based navigation
-│       ├── _layout.tsx
-│       ├── index.tsx      # Home screen
-│       └── explore.tsx    # Explore screen
-├── assets/                # Static assets (images, fonts)
-├── components/            # Reusable UI components
-│   ├── ui/               # UI-specific components
-│   └── ...               # Other components
-├── constants/             # App constants and themes
-├── hooks/                 # Custom React hooks
-└── scripts/               # Utility scripts
+To build an installable Android APK:
+```bash
+eas build --platform android --profile preview
 ```
 
-## 🔄 Development
+## 🏗️ Architecture
 
-### Available Scripts
+```
+├── app/                  # Expo Router directory (screens & layouts)
+│   ├── (tabs)/           # Main tab navigation
+│   ├── profile/          # User profile management
+│   ├── movie/            # Movie detailed views
+│   └── see-all.tsx       # Dynamic grid view
+├── utils/                # Service layer & configurations
+│   ├── api.ts            # TMDB integration
+│   ├── db.ts             # Neon/Drizzle setup
+│   ├── schema.ts         # Database models
+│   └── userService.ts    # Profile sync logic
+├── assets/               # Local images and fonts
+├── drizzle.config.ts     # DB migration settings
+└── package.json          # Project dependencies
+```
 
-- `npm start` - Start the Expo development server
-- `npm run android` - Run on Android emulator/device
-- `npm run ios` - Run on iOS simulator/device
-- `npm run web` - Run in web browser
-- `npm run reset-project` - Reset to a fresh project state
+## 📜 Database Schema
 
-### Code Style
-
-This project uses ESLint for code linting. Run `npm run lint` to check for issues.
-
-### Testing
-
-*Add testing instructions here*
+We use Drizzle ORM to manage our Neon PostgreSQL instance:
+- **Users Table**: Stores `id` (linked to Clerk), `email`, `full_name`, `avatar_url`, and `bio`.
+- **Automatic Hooks**: Every sign-in triggers a `syncUserToDB` call to ensure local profiles stay updated with the cloud.
 
 ## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Feel free to fork this project and submit PRs. For major changes, please open an issue first to discuss what you would like to change.
 
 ## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [The Movie Database (TMDb)](https://www.themoviedb.org/) for providing movie data
-- [Expo](https://expo.dev) for the amazing React Native framework
-- [React Native Community](https://github.com/react-native-community) for various libraries
-
-## 📞 Support
-
-If you have any questions or issues, please open an issue on GitHub or contact the development team.
+This project is licensed under the MIT License.
 
 ---
-
-*Built with ❤️ using Expo and React Native*
+Built with ❤️ by the Cinemate Team.
