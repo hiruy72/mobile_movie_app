@@ -40,7 +40,7 @@ Cinemate is a state-of-the-art mobile application built with **React Native (Exp
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/mobile_movie_app.git
+   git clone https://github.com/hiruy72/mobile_movie_app.git
    cd mobile_movie_app
    ```
 
